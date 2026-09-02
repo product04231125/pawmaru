@@ -1,0 +1,42 @@
+name: pawmaru
+
+services:
+  frontend:
+    image: nginx:1.29-alpine
+    container_name: pawmaru-frontend
+    restart: unless-stopped
+    volumes:
+      - ./infra/placeholder/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infra/placeholder/index.html:/usr/share/nginx/html/index.html:ro
+    networks:
+      - edge
+
+  db:
+    image: postgres:16-alpine
+    container_name: pawmaru-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  edge:
+    external: true
+    name: pawmaru-edge
+  backend:
+    name: pawmaru-backend
+    internal: true
