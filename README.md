@@ -1,6 +1,12 @@
-# Pawmaru infrastructure
+# Pawmaru
 
-포우마루 개발·운영 인프라의 기본 구성입니다.
+반려동물 용품 쇼핑몰 졸업작품입니다. Next.js 프론트엔드, Spring Boot API, PostgreSQL을 각각의 컨테이너로 운영합니다.
+
+## Documents
+
+- `docs/ERD.md`: 데이터 모델과 관계
+- `docs/구현_우선순위.md`: MVP 범위와 4주 실행 순서
+- `docs/포우마루_작품계획서.md`: 작품 계획서
 
 ## Current layout
 
@@ -28,14 +34,16 @@ docker compose up -d db
 docker compose ps
 ```
 
-## Placeholder frontend
+## Application containers
 
-The current frontend is a temporary Nginx page. When the Next.js application is
-added, keep these runtime contracts so the shared proxy does not need to change:
+The gateway contract remains stable while the application is independently deployed:
 
 - container/service name: `pawmaru-frontend`
 - listen port inside the container: `3000`
 - attach the container to `pawmaru-edge`
+
+The Spring Boot container and PostgreSQL only join the private `pawmaru-backend`
+network. Browser `/api` requests are forwarded by Next.js to the backend.
 
 ## Useful checks
 
