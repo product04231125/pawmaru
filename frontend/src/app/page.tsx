@@ -1,13 +1,9 @@
 import Link from "next/link";
+import { ProductCard } from "@/components/ProductCard";
+import { getProducts } from "@/lib/products";
 
-export default function Home() {
-  return (
-    <main>
-      <section className="hero">
-        <div><p className="eyebrow">PAWMARU SELECT</p><h1>함께하는 매일을<br />더 건강하고 즐겁게</h1><p>반려동물의 생애와 취향을 생각한 좋은 제품을 소개합니다.</p><Link className="button" href="/products">상품 둘러보기</Link></div>
-        <div className="hero-mark" aria-hidden="true">🐾</div>
-      </section>
-      <section className="section"><p className="eyebrow">SHOP BY FRIEND</p><h2>누구와 함께 살고 있나요?</h2><div className="category-grid"><Link href="/products?category=dog"><span>🐶</span><strong>강아지</strong><small>사료 · 간식 · 산책용품</small></Link><Link href="/products?category=cat"><span>🐱</span><strong>고양이</strong><small>사료 · 모래 · 장난감</small></Link></div></section>
-    </main>
-  );
+export default async function Home() {
+  const products = await getProducts();
+  const categories = [["사료","Food","🥣"],["간식","Snack","🦴"],["영양제","Health","🌿"],["위생용품","Care","🫧"],["장난감","Play","🎾"]];
+  return <main><section className="hero"><div className="container"><div className="hero-content"><div className="eyebrow">FOR A BETTER LIFE TOGETHER</div><h1>함께하는 매일을<br/><span>더 건강하고 다정하게</span></h1><p>우리 아이의 나이, 체중, 알레르기까지 생각한<br/>포우마루의 맞춤 반려생활 큐레이션을 만나보세요.</p><Link className="button" href="/products">맞춤 상품 둘러보기 <span>›</span></Link><div className="hero-note"><span><i>✓</i> 꼼꼼한 성분 확인</span><span><i>✓</i> 반려동물 맞춤 추천</span><span><i>✓</i> 안심 배송</span></div></div></div></section><div className="trust-bar"><div className="container trust-inner"><div className="trust-item"><span className="trust-icon">♧</span><div><b>성분 기준 큐레이션</b><small>건강을 먼저 생각해요</small></div></div><div className="trust-item"><span className="trust-icon">♡</span><div><b>프로필 맞춤 추천</b><small>우리 아이에게 꼭 맞게</small></div></div><div className="trust-item"><span className="trust-icon">♢</span><div><b>꼼꼼한 포장</b><small>안전하고 빠른 배송</small></div></div><div className="trust-item"><span className="trust-icon">↺</span><div><b>쉬운 교환·반품</b><small>수령 후 7일 이내</small></div></div></div></div><section className="section"><div className="container"><div className="section-head"><div><div className="section-kicker">Shop by category</div><h2>필요한 것만 쏙쏙</h2><p className="section-desc">매일의 반려생활에 꼭 필요한 카테고리를 모았어요.</p></div><Link className="text-link" href="/products">전체 카테고리 보기 →</Link></div><div className="categories">{categories.map(([ko,en,icon])=><Link className="category-card" href={`/products?category=${en.toLowerCase()}`} key={en}><b>{ko}</b><small>{en}</small><span className="category-visual">{icon}</span></Link>)}</div></div></section><section className="section soft"><div className="container"><div className="section-head"><div><div className="section-kicker">Most loved</div><h2>요즘 가장 사랑받아요</h2><p className="section-desc">포우마루 고객들이 많이 찾는 인기 상품이에요.</p></div><Link className="text-link" href="/products">인기상품 더보기 →</Link></div>{products.length ? <div className="products-grid">{products.slice(0,4).map((product,index)=><ProductCard key={product.id} product={product} index={index}/>)}</div> : <div className="empty">상품을 준비하고 있어요.</div>}</div></section><section className="section" id="profile"><div className="container"><div className="profile-banner"><div className="profile-copy"><div className="section-kicker">Personal curation</div><h2>우리 아이를 알려주면<br/>더 잘 맞는 상품을 찾아드려요</h2><p>종류와 나이, 몸무게, 알레르기 정보를 등록해 보세요. 상품마다 우리 아이에게 맞는지 한눈에 확인할 수 있어요.</p><span className="button light">반려동물 프로필 만들기 →</span></div><div className="profile-art"><div className="pet-card"><div className="pet-card-top"><span className="pet-avatar">🐶</span><div><b>몽이</b><small>골든리트리버 · 4살</small></div></div><div className="pet-tags"><span>24.5kg</span><span>성견</span><span>활동량 높음</span><span>닭고기 알레르기</span></div></div></div></div></div></section></main>;
 }

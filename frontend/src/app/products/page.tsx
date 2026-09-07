@@ -1,11 +1,11 @@
+import type { ReactNode } from "react";
+import { ProductCard } from "@/components/ProductCard";
 import { getProducts } from "@/lib/products";
+
+const Check = ({ children, count, selected=false }: { children:ReactNode;count?:number;selected?:boolean }) => <label className={`check ${selected?"selected":""}`}><span className="fake-check"/>{children}{count !== undefined && <span className="filter-count">{count}</span>}</label>;
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ keyword?: string }> }) {
   const { keyword = "" } = await searchParams;
   const products = await getProducts(keyword);
-  return (
-    <main className="section products-page"><p className="eyebrow">PAWMARU PRODUCTS</p><h1>전체상품</h1><form className="search" action="/products"><input name="keyword" defaultValue={keyword} placeholder="상품명을 검색해 보세요" aria-label="상품명" /><button type="submit">검색</button></form>
-      {products.length === 0 ? <div className="empty"><span>🐾</span><strong>상품을 준비하고 있어요.</strong><p>DB에 상품이 등록되면 이 화면에 바로 표시됩니다.</p></div> : <div className="product-grid">{products.map((product) => { const prices = product.options.map((option) => option.price); return <article className="product-card" key={product.id}><div className="product-image">PAWMARU</div><p>포우마루 셀렉트</p><h2>{product.name}</h2><strong>{prices.length ? Math.min(...prices).toLocaleString("ko-KR") : "가격 준비 중"}{prices.length ? "원" : ""}</strong></article>; })}</div>}
-    </main>
-  );
+  return <main><section className="page-title"><div className="container"><div className="breadcrumb">HOME &nbsp;/&nbsp; <b>전체상품</b></div><div className="page-title-row"><div><h1>전체상품</h1><p>포우마루가 꼼꼼하게 고른 반려생활 아이템을 만나보세요.</p></div><div className="result-count">총 <strong>{products.length}개</strong>의 상품</div></div></div></section><div className="container shop-layout"><aside className="filter-sidebar"><div className="filter-block"><h3 className="filter-title">반려동물</h3><Check count={products.length} selected>전체</Check><Check count={2}>강아지</Check><Check count={1}>고양이</Check></div><div className="filter-block"><h3 className="filter-title">카테고리</h3><Check>사료</Check><Check>간식</Check><Check>영양제</Check><Check>위생·케어</Check><Check>장난감</Check></div><div className="filter-block"><h3 className="filter-title">연령</h3><Check>퍼피·키튼</Check><Check>성견·성묘</Check><Check>시니어</Check></div><div className="filter-block"><h3 className="filter-title">가격</h3><div className="price-inputs"><div className="price-box">최저 금액</div><span>–</span><div className="price-box">최고 금액</div></div></div></aside><section className="shop-main"><form className="product-search" action="/products"><input name="keyword" defaultValue={keyword} placeholder="상품 검색" aria-label="상품명 검색"/><button>검색</button></form><div className="shop-toolbar"><div className="chips"><span className="chip">전체 ✕</span><button type="button" className="button mobile-filter">필터</button></div><div className="sort">인기순 &nbsp;⌄</div></div>{products.length ? <div className="products-grid">{products.map((product,index)=><ProductCard key={product.id} product={product} index={index}/>)}</div> : <div className="empty">검색 결과가 없습니다.</div>}</section></div></main>;
 }
